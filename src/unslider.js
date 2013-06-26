@@ -22,7 +22,8 @@
 			fluid: f,     // is it a percentage width? (boolean)
 			complete: f,  // invoke after animation (function with argument)
 			items: '>ul', // slides container selector
-			item: '>li'   // slidable items selector
+			item: '>li',   // slidable items selector
+			activeClass : 'active', // The active class for the slide
 		};
 
 		_.init = function(el, o) {
@@ -36,12 +37,16 @@
 				var me = $(this),
 					width = me.outerWidth(),
 					height = me.outerHeight();
-
 				//  Set the max values
 				if (width > _.max[0]) _.max[0] = width;
 				if (height > _.max[1]) _.max[1] = height;
-			});
 
+				// If it is the first item, let's add the activeClass.
+				if ( index == 0 ) {
+					me.addClass( _.o.activeClass );
+				}
+
+			});
 
 			//  Cached vars
 			var o = _.o,
@@ -145,6 +150,10 @@
 
 				el.animate(obj, speed) && ul.animate($.extend({left: '-' + index + '00%'}, obj), speed, function(data) {
 					_.i = index;
+
+					// Add an active class to the slide and remove it from the previous slide
+					ul.children().removeClass( o.activeClass );
+					target.addClass( o.activeClass );
 
 					$.isFunction(o.complete) && !callback && o.complete(el);
 				});
